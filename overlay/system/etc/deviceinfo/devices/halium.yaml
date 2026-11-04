@@ -1,0 +1,29 @@
+chiron:
+  Names:
+    - mix2
+    - MIX2
+    - Mi MIX 2
+
+  PrettyName: Xiaomi Mi MIX 2
+  DeviceType: phone
+  GridUnit: 24
+  SupportedOrientations:
+    - Portrait
+    - Landscape
+    - InvertedLandscape
+  MirAndroidPlatformServerBackpressure:
+    - false
+  MirAndroidPlatformServerPartialUpdates:
+    - true
+  MirAndroidPlatformServerEglSync:
+    - false
+  MirAndroidPlatformClientEglFlush:
+    - "!/usr/bin/unity8,!/usr/bin/lomiri,all"
+
+  FlashlightSysfsPath: "/sys/class/leds/led:torch_0/brightness"
+  FlashlightSwitchPath: "/sys/class/leds/led:switch_0/brightness"
+  # chiron 触摸为 synaptics_dsx（i2c 5-0020），实测无 gesture/double_en 节点，
+  # 双击唤醒暂不可用；后续若适配手势再开启。
+  # DoubleTapToWake: "/sys/devices/platform/goodix_ts.0/gesture/double_en|1|0"
+  OfonoPlugin: binder
+  OfonoImplementsIms: true

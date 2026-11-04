@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Halium 9.0 local manifest —— Xiaomi Mi MIX 2 (chiron)
+
+  这是「备用路线」（legacy 完整 system.img 构建，Droidian 文档化的
+  pre-Treble 设备流程）。主路线是仓库根目录的 community-ports CI
+  （gsi-port-ci.yml，rootfs 装进 /data），不经过本 manifest。
+
+  用法（Linux 构建机）：
+    repo init -u https://github.com/Halium/android -b halium-9.0 --depth=1
+    mkdir -p .repo/local_manifests
+    cp manifests/xiaomi_chiron.xml .repo/local_manifests/
+    repo sync
+    BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
+-->
+<manifest>
+  <remote name="los"      fetch="https://github.com/LineageOS/" />
+  <remote name="ubports"  fetch="https://gitlab.com/ubports/community-ports/android9/xiaomi-mi-6/" />
+  <!-- vendor 仓库需要自建（私有/公开 GitLab 均可），
+       内容 = tools/extract-vendor.ps1 + tools/build-vendor-repo.ps1 的产出。
+       把下面的 remote 换成你自己的地址。 -->
+  <remote name="chironvendor" fetch="https://gitlab.com/YOUR-NAMESPACE/" />
+
+  <project path="device/xiaomi/chiron"
+           name="android_device_xiaomi_chiron" remote="los" revision="lineage-16.0" />
+  <project path="device/xiaomi/msm8998-common"
+           name="android_device_xiaomi_msm8998-common" remote="los" revision="lineage-16.0" />
+  <!-- 复用 Mi 6 组的共享 msm8998 Halium 内核（halium-9.0 分支，需含 chiron_defconfig；
+       若该分支没有 chiron_defconfig，先 fork 后从 LOS lineage-16.0 添加） -->
+  <project path="kernel/xiaomi/msm8998"
+           name="android_kernel_xiaomi_msm8998" remote="ubports" revision="halium-9.0" />
+  <project path="vendor/xiaomi"
+           name="proprietary_vendor_xiaomi" remote="chironvendor" revision="lineage-16.0" />
+</manifest>
