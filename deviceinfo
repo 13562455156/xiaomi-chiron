@@ -13,7 +13,7 @@ deviceinfo_kernel_source_branch="halium-9.0"
 deviceinfo_kernel_defconfig="chiron_defconfig"
 # cmdline 与 Mi 6 (sagit) 完全一致；systempart 用 by-partlabel（halium initramfs 由 udev
 # 生成）。若 chiron 首启找不到 system，再改回 /dev/block/bootdevice/by-name/system。
-deviceinfo_kernel_cmdline="androidboot.console=ttyMSM0 androidboot.hardware=qcom user_debug=31 msm_rtb.filter=0x37 ehci-hcd.park=3 service_locator.enable=1 swiotlb=2048 console=tty0 systempart=/dev/disk/by-partlabel/system"
+deviceinfo_kernel_cmdline="androidboot.console=ttyMSM0 androidboot.hardware=qcom user_debug=31 msm_rtb.filter=0x37 ehci-hcd.park=3 service_locator.enable=1 swiotlb=2048 console=tty0 systempart=/dev/disk/by-partlabel/system mdss_mdp.panel=1:dsi:0:qcom,mdss_dsi_jdi_fhd_nt35596s_pro_video:config2:1:none:cfg:single_dsi"
 deviceinfo_kernel_clang_compile="false"
 deviceinfo_kernel_apply_overlay="false"
 deviceinfo_generate_bootimg="true"
