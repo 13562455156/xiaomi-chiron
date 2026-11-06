@@ -8,7 +8,7 @@ deviceinfo_use_overlaystore="true"
 # 注意：共享内核 halium-9.0 分支只有 sagit_defconfig，没有 chiron_defconfig。
 # 必须 fork 该内核仓库，把本仓库 kernel/chiron_defconfig 放入
 # arch/arm64/configs/ 后，再把下面两行指向你的 fork（保持分支名 halium-9.0）。
-deviceinfo_kernel_source="https://gitlab.com/YOUR-GITLAB/android_kernel_xiaomi_msm8998.git"
+deviceinfo_kernel_source="https://gitlab.com/alimentu273/android_kernel_xiaomi_msm8998.git"
 deviceinfo_kernel_source_branch="halium-9.0"
 deviceinfo_kernel_defconfig="chiron_defconfig"
 # cmdline 与 Mi 6 (sagit) 完全一致；systempart 用 by-partlabel（halium initramfs 由 udev
