@@ -1,0 +1,81 @@
+# ============================================================
+#  chiron Ubuntu Touch 移植 — GitHub Actions 构建管线
+#  与 UBports 共享 gsi-port-ci.yml 的 GitLab 管线等价：
+#   - build：每次 push 自动编译内核 + halium-boot.img
+#   - devel-flashable：手动触发（Run workflow），产出可刷机文件
+#     boot.img / recovery.img / dtbo.img / ubuntu.img.zst
+#  （用户 GitLab 账号无法通过身份验证，故用 GitHub Actions 代替）
+# ============================================================
+name: halium-build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            bc bison build-essential ca-certificates cpio curl fakeroot flex git \
+            kmod libelf-dev libssl-dev libtinfo5 lz4 python2 python3 sudo unzip wget \
+            xz-utils pahole libbpf-dev
+          sudo ln -sf /usr/bin/python2 /usr/bin/python
+
+      - name: Build kernel and halium boot image
+        run: ./build.sh
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: out/
+          retention-days: 30
+
+  devel-flashable:
+    runs-on: ubuntu-22.04
+    needs: build
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: out
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            fakeroot git img2simg jq sudo wget xz-utils zstd
+
+      - name: Prepare devel flashable image
+        run: |
+          git clone -b main https://gitlab.com/ubports/community-ports/halium-generic-adaptation-build-tools.git build
+          DEVICE="$(source deviceinfo && echo $deviceinfo_codename)"
+          ./build/prepare-fake-ota.sh "out/device_${DEVICE}.tar.xz" ota
+          mkdir -p out
+          ./build/system-image-from-ota.sh ota/ubuntu_command out
+          mv out/rootfs.img out/ubuntu.img
+          zstd --ultra -22 -T0 out/ubuntu.img
+          rm -f out/ubuntu.img
+
+      - name: Upload flashable artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: flashable-artifacts
+          path: |
+            out/*boot.img
+            out/dtbo.img
+            out/recovery.img
+            out/ubuntu.img.zst
+          retention-days: 30
