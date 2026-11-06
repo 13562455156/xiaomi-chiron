@@ -1,4 +1,5 @@
-test_job:
-  stage: build
-  script:
-    - echo "ci-ok"
+include:
+    - https://gitlab.com/ubports/porting/community-ports/halium-generic-adaptation-build-tools/-/raw/main/gsi-port-ci.yml
+
+variables:
+    BUILD_DEVEL_FLASHABLE_FOCAL: "1"
